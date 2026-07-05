@@ -4,14 +4,17 @@ class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Sign Up
-  // Geriye User (Kullanıcı) objesi döner, hata varsa null döner
+// Sign Up
   Future<User?> kayitOl(String email, String password) async {
     try {
       UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      
+      // Kullanıcıya doğrulama e-postası gönderir
+      await userCredential.user?.sendEmailVerification();
+      
       return userCredential.user;
     } catch (e) {
       print("Kayıt Servisi Hatası: $e");
