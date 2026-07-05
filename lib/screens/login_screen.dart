@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart'; // Backend işçimizi buraya çağırdık
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -27,7 +28,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (user != null) {
       _mesajGoster("Giriş başarılı! Hoş geldin.");
-      // Başarılı olunca Hatırlatıcılar (Ana) sayfasına yönlendirilecek
+    // Home page yönlendirmesi
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
     } else {
       _mesajGoster("Giriş başarısız. Lütfen bilgileri kontrol et.");
     }
@@ -42,9 +49,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (user != null) {
       _mesajGoster("Kayıt başarılı! Giriş yapıldı.");
-      // Başarılı olunca Hatırlatıcılar sayfasında kullanıcıya özel repo açılacak
+      // Home page yönlendirmesi
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
     } else {
-      _mesajGoster("Kayıt başarısız. Hata konsola yazdırıldı.");
+      _mesajGoster("Kayıt başarısız.");
     }
   }
 
