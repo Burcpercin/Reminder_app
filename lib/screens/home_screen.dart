@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
 import 'login_screen.dart';
+import 'add_reminder_screen.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -49,8 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
       // Not ekleme butonu
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Not ekleme penceresi (Test için)
-          print("Not ekleme butonuna basıldı");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddReminderScreen()),
+          );
         },
         backgroundColor: Colors.deepPurpleAccent,
         child: const Icon(Icons.add, color: Colors.white),
