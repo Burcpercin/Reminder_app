@@ -167,19 +167,19 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
                   label: const Text("Düşük"),
                   selected: _priority == 0,
                   onSelected: (val) => setState(() => _priority = 0),
-                  selectedColor: Colors.blue.shade200,
+                  selectedColor: const Color.fromARGB(255, 75, 174, 255),
                 ),
                 ChoiceChip(
                   label: const Text("Orta"),
                   selected: _priority == 1,
                   onSelected: (val) => setState(() => _priority = 1),
-                  selectedColor: Colors.orange.shade200,
+                  selectedColor: const Color.fromARGB(255, 255, 170, 41),
                 ),
                 ChoiceChip(
                   label: const Text("Yüksek"),
                   selected: _priority == 2,
                   onSelected: (val) => setState(() => _priority = 2),
-                  selectedColor: Colors.red.shade200,
+                  selectedColor: const Color.fromARGB(255, 255, 59, 59),
                 ),
               ],
             ),
@@ -189,7 +189,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
             SwitchListTile(
               title: const Text("Tarih Ekle"),
               value: _hasDate,
-              activeColor: Colors.deepPurpleAccent,
+              activeColor: Color(0xFF4D319C),
               onChanged: (val) {
                 setState(() {
                   _hasDate = val;
@@ -218,7 +218,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
             SwitchListTile(
               title: const Text("Saat Ekle"),
               value: _hasTime,
-              activeColor: Colors.deepPurpleAccent,
+              activeColor: Color(0xFF4D319C),
               onChanged: (val) {
                 setState(() {
                   _hasTime = val;
@@ -248,7 +248,7 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurpleAccent),
+                style: ElevatedButton.styleFrom(backgroundColor: Color(0xFF4D319C)),
                 onPressed: _kaydet,
                 child: const Text("Hatırlatıcıyı Kaydet", style: TextStyle(color: Colors.white, fontSize: 16)),
               ),

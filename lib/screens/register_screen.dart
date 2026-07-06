@@ -54,7 +54,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.person_add_alt_1, size: 80, color: Colors.deepPurpleAccent),
+            const Icon(Icons.person_add_alt_1, size: 80, color: Color(0xFF4D319C)),
             const SizedBox(height: 40),
             TextField(
               controller: _emailController,
@@ -79,7 +79,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               height: 50,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurpleAccent,
+                  backgroundColor:Color(0xFF4D319C),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 onPressed: _kaydiTamamla,

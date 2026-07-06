@@ -18,12 +18,12 @@ class _HomeScreenState extends State<HomeScreen> {
   final AuthService _authService = AuthService();
   final FirestoreService _firestoreService = FirestoreService();
 
-  // Tarih damgası
+  // TARİH FORMATLAMA YARDIMCISI
   String _tarihFormatla(DateTime date) {
     return "${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
   }
 
-  // Çıkış fonksiyonu
+  // ÇIKIŞ YAPMA
   void _cikisYap() async {
     await _authService.cikisYap();
     if (mounted) {
@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true, // Appbar'ın arkasını da degrade yap
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: const Text("Hatırlatıcılarım", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
         centerTitle: true,
@@ -45,38 +45,34 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout, color: Colors.white),
+            icon: const Icon(Icons.logout, color: Color.fromARGB(255, 190, 17, 17)),
             onPressed: _cikisYap,
             tooltip: 'Çıkış Yap',
           )
         ],
       ),
-      // Glass-Card
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF141E30), Color(0xFF243B55)],
+            colors: [ Color(0xFF3E277E), Color(0xFF243B55)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
         child: SafeArea(
           child: StreamBuilder<List<ReminderModel>>(
-            stream: _firestoreService.getReminders(), // Veritabanını canlı dinle
+            stream: _firestoreService.getReminders(),
             builder: (context, snapshot) {
-              // Yükleniyor durumu
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator(color: Colors.white));
               }
 
-              // Hata durumu
               if (snapshot.hasError) {
                 return Center(child: Text("Bir hata oluştu: ${snapshot.error}", style: const TextStyle(color: Colors.red)));
               }
 
               final reminders = snapshot.data ?? [];
 
-              // Liste boşsa
               if (reminders.isEmpty) {
                 return const Center(
                   child: Text(
@@ -87,31 +83,85 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
 
-              // Liste görünümü
               return ListView.builder(
                 padding: const EdgeInsets.all(16),
                 itemCount: reminders.length,
                 itemBuilder: (context, index) {
                   final reminder = reminders[index];
 
-                  // Priority e göre renk
                   Color priorityColor;
                   if (reminder.priority == 2) {
-                    priorityColor = Colors.redAccent; // Yüksek
+                    priorityColor = Colors.redAccent;
                   } else if (reminder.priority == 1) {
-                    priorityColor = Colors.orangeAccent; // Orta
+                    priorityColor = Colors.orangeAccent;
                   } else {
-                    priorityColor = Colors.lightBlueAccent; // Düşük
+                    priorityColor = Colors.lightBlueAccent;
                   }
 
-                  // Done durumunda soluk (inactive) görünüm
                   if (reminder.isCompleted) {
                     priorityColor = Colors.grey;
                   }
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
-                    child: _buildGlassCard(reminder, priorityColor),
+                    // Kaydırarak silme widget
+                    child: Dismissible(
+                      key: Key(reminder.id), // Her karta özel benzersiz anahtar
+                      direction: DismissDirection.endToStart, // Sadece sağdan sola kaydırma
+                      background: Container(
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.only(right: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.redAccent,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Icon(Icons.delete_sweep, color: Colors.white, size: 36),
+                      ),
+                      // Kesinleştirme modalı
+                      confirmDismiss: (direction) async {
+                        return await showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              backgroundColor: const Color(0xFF243B55), // Temaya uygun koyu arka plan
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                              title: const Row(
+                                children: [
+                                  Icon(Icons.warning_amber_rounded, color: Colors.redAccent),
+                                  SizedBox(width: 8),
+                                  Text("Silmek Üzeresin", style: TextStyle(color: Colors.white)),
+                                ],
+                              ),
+                              content: const Text("Bu hatırlatıcıyı kalıcı olarak silmek istediğine emin misin?", style: TextStyle(color: Colors.white70)),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(false), // İptal seçeneği
+                                  child: const Text("İptal", style: TextStyle(color: Colors.grey)),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+                                  onPressed: () => Navigator.of(context).pop(true), // Onay seçeneği
+                                  child: const Text("Evet, Sil", style: TextStyle(color: Colors.white)),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
+                      
+                      onDismissed: (direction) {
+                        _firestoreService.deleteReminder(reminder.id);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Hatırlatıcı başarıyla silindi."),
+                            backgroundColor:  Color(0xFFA7A7A7),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      // KARTIN KENDİSİ
+                      child: _buildGlassCard(reminder, priorityColor),
+                    ),
                   );
                 },
               );
@@ -126,24 +176,56 @@ class _HomeScreenState extends State<HomeScreen> {
             MaterialPageRoute(builder: (context) => const AddReminderScreen()),
           );
         },
-        backgroundColor: Colors.deepPurpleAccent,
+        backgroundColor: Color(0xFF4D319C),
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
 
-  // Glass-card
+  // ZAMAN ROZETİ TASARIMI
+  Widget _buildZamanRozeti(ReminderModel reminder, Color priorityColor) {
+    if ((!reminder.hasDate && !reminder.hasTime) || reminder.scheduledAt == null) {
+      return const SizedBox(); // Tarih/Saat yoksa hiçbir şey çizme
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: priorityColor.withOpacity(0.15), // Karta göre daha belirgin dolgu
+        borderRadius: BorderRadius.circular(20), // Kapsül görünümü
+        border: Border.all(color: priorityColor.withOpacity(0.5), width: 1),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.calendar_month_rounded, size: 16, color: priorityColor),
+          const SizedBox(width: 6),
+          Text(
+            _tarihFormatla(reminder.scheduledAt!),
+            style: TextStyle(
+              color: priorityColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 13,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // GLASSMORPHISM KART TASARIMI
   Widget _buildGlassCard(ReminderModel reminder, Color priorityColor) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(20), // Kartın köşelerini yuvarlat
+      borderRadius: BorderRadius.circular(20),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10), // Cam bulanıklığı
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
           decoration: BoxDecoration(
-            color: priorityColor.withOpacity(0.15), // İçi hafif saydam renkli
+            color: priorityColor.withOpacity(0.15),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: priorityColor.withOpacity(0.4), // Kenarlık biraz daha belirgin
+              color: priorityColor.withOpacity(0.4),
               width: 1.5,
             ),
           ),
@@ -155,7 +237,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Done checkbox
                     Transform.scale(
                       scale: 1.2,
                       child: Checkbox(
@@ -164,14 +245,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         side: BorderSide(color: priorityColor, width: 2),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                         onChanged: (val) {
-                          // Firestore'daki durumu anında güncelle
                           _firestoreService.toggleCompletion(reminder.id, reminder.isCompleted);
                         },
                       ),
                     ),
                     const SizedBox(width: 8),
-                    
-                    // Başlık ve detay
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,7 +260,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: reminder.isCompleted ? Colors.grey : Colors.white,
-                              // Tamamlandıysa üstünü çiz
                               decoration: reminder.isCompleted ? TextDecoration.lineThrough : null,
                             ),
                           ),
@@ -203,32 +280,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
                 
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
 
-                // Planlanan zaman ve oluşturma tarihi
+                // ROZETİ VE OLUŞTURULMA TARİHİ
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    // Planlanan Zaman (Eğer tarih veya saat seçilmişse göster)
-                    (reminder.hasDate || reminder.hasTime) && reminder.scheduledAt != null
-                        ? Row(
-                            children: [
-                              Icon(Icons.access_time_filled, size: 16, color: priorityColor),
-                              const SizedBox(width: 4),
-                              Text(
-                                _tarihFormatla(reminder.scheduledAt!),
-                                style: TextStyle(
-                                  color: priorityColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
-                                ),
-                              ),
-                            ],
-                          )
-                        : const SizedBox(), // Tarih seçilmemişse boş bırak
+                    // Zaman Rozeti
+                    _buildZamanRozeti(reminder, priorityColor),
 
-                    // Reminder zaman damgası
+                    // oluşturulma zamanı damgası
                     Text(
                       "Oluşturuldu: ${_tarihFormatla(reminder.createdAt)}",
                       style: const TextStyle(

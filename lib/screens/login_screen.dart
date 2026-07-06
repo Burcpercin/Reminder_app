@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
           // KAPATMA BUTONU
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Tamam, Anladım", style: TextStyle(color: Colors.deepPurpleAccent)),
+            child: const Text("Tamam, Anladım", style: TextStyle(color: Color(0xFF4D319C))),
           ),
         ],
       ),
@@ -98,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.lock_outline, size: 80, color: Colors.deepPurpleAccent),
+            const Icon(Icons.lock_outline, size: 80, color: Color(0xFF4D319C)),
             const SizedBox(height: 40),
             
             TextField(
@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 50,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurpleAccent,
+                  backgroundColor: Color(0xFF4D319C),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 onPressed: _girisYap,
