@@ -6,6 +6,7 @@ import '../services/firestore_service.dart';
 import '../models/reminder_model.dart';
 import 'login_screen.dart';
 import 'add_reminder_screen.dart';
+import '../services/notification_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -149,12 +150,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         );
                       },
                       
+                      // ONAY VERİLDİKTEN SONRA TETİKLENEN İŞLEM
                       onDismissed: (direction) {
+                        // 1. Veritabanından sil
                         _firestoreService.deleteReminder(reminder.id);
+                        
+                        // 2. YENİ: Telefonda kurulan alarmı iptal et
+                        NotificationService().bildirimIptalEt(reminder.id.hashCode);
+                        
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text("Hatırlatıcı başarıyla silindi."),
-                            backgroundColor:  Color(0xFFA7A7A7),
+                            backgroundColor: Color.fromARGB(255, 89, 57, 148),
                             duration: Duration(seconds: 2),
                           ),
                         );
@@ -246,6 +253,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                         onChanged: (val) {
                           _firestoreService.toggleCompletion(reminder.id, reminder.isCompleted);
+                          if (!reminder.isCompleted) { // Eğer tamamlandıysa alarmı kapat
+                              NotificationService().bildirimIptalEt(reminder.id.hashCode);
+                            }
                         },
                       ),
                     ),

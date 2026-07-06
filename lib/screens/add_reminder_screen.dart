@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/reminder_model.dart';
 import '../services/firestore_service.dart';
+import '../services/notification_service.dart';
 
 class AddReminderScreen extends StatefulWidget {
   const AddReminderScreen({super.key});
@@ -115,16 +116,39 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
 
     // Try-Catch
     try {
-      await _firestoreService.addReminder(newReminder);
+      // Veritabanına kaydet ve bize geri dönen ID'yi al
+      final generatedId = await _firestoreService.addReminder(newReminder);
+      
+      // EĞER KULLANICI BİR ZAMAN SEÇTİYSE BİLDİRİMİ TELEFONA KUR
+      if (generatedId != null && finalScheduledAt != null) {
+        // ZAMAN KONTROLÜ: Seçilen zaman şu andan ileride mi?
+        if (finalScheduledAt.isAfter(DateTime.now())) {
+          await NotificationService().bildirimKur(
+            id: generatedId.hashCode, // Metin olan ID'yi benzersiz bir sayıya (int) çevirir
+            baslik: title,
+            icerik: _descController.text.trim().isEmpty ? "Hatırlatıcı zamanı geldi!" : _descController.text.trim(),
+            zaman: finalScheduledAt,
+          );
+        } else {
+          // Mantık hatası: Geçmiş zamana alarm kurulamaz.
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Geçmiş bir zamana bildirim kurulamaz, kayıt sadece not olarak eklendi."), 
+                backgroundColor: Colors.orange,
+              ),
+            );
+          }
+        }
+      }
       
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Hatırlatıcı başarıyla eklendi!"), backgroundColor: Colors.green),
         );
-        Navigator.pop(context); // Ekranı kapatıp ana ekrana dön
+        Navigator.pop(context); // Ekranı kapat
       }
     } catch (e) {
-      // Eğer Firebase'den veya internetten kaynaklı bir sorun olursa kullanıcıya göster
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Kayıt başarısız oldu: $e"), backgroundColor: Colors.red),
       );

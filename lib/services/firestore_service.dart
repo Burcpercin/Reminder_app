@@ -11,15 +11,19 @@ class FirestoreService {
   // Güvenlik: İşlem yapan anlık kullanıcının ID'sini almak için
   String? get currentUserId => _auth.currentUser?.uid;
 
-  // 1. YENİ HATIRLATICI EKLEME (Create)
-  Future<void> addReminder(ReminderModel reminder) async {
-    if (currentUserId == null) return;
+  // 1. YENİ HATIRLATICI EKLEME (Create) - DÜZELTİLDİ
+  // Artık geriye String (ID) döndüreceğini açıkça belirtiyoruz
+  Future<String?> addReminder(ReminderModel reminder) async {
+    if (currentUserId == null) return null; // void yerine null döndürüyoruz
     
     // Güvenlik Duvarı: Veritabanına gidecek verinin ID'si kesinlikle anlık kullanıcıya ait olmalı
     reminder.userId = currentUserId!;
+
+    // Modelimizi toMap() ile JSON'a çevirip buluta yolluyoruz ve referansını alıyoruz
+    final docRef = await _remindersRef.add(reminder.toMap());
     
-    // Modelimizi toMap() ile JSON'a çevirip buluta yolluyoruz
-    await _remindersRef.add(reminder.toMap());
+    // Oluşturulan belgenin Firebase ID'sini bildirime bağlamak için geri döndürüyoruz
+    return docRef.id; 
   }
 
   // 2. HATIRLATICILARI OKUMA (Read - Gerçek Zamanlı Dinleme)
