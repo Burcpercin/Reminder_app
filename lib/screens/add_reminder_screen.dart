@@ -72,25 +72,38 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
         _selectedDate!.year, _selectedDate!.month, _selectedDate!.day,
         _selectedTime!.hour, _selectedTime!.minute,
       );
+      
+      // GEÇMİŞ ZAMAN ENGELLEMESİ
+      if (finalScheduledAt.isBefore(DateTime.now())) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Geçmiş bir tarih ve saate hatırlatıcı kurulamaz!"),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+        return; // İşlemi burada kes
+      }
+      
     } else if (_hasDate && !_hasTime && _selectedDate != null) {
       // 2. Sadece Tarih seçiliyse saati 00:00 yap
       finalScheduledAt = DateTime(_selectedDate!.year, _selectedDate!.month, _selectedDate!.day, 0, 0);
+      
     } else if (!_hasDate && _hasTime && _selectedTime != null) {
       // 3. Sadece Saat seçiliyse bugünü baz al
       final now = DateTime.now();
       var calculated = DateTime(now.year, now.month, now.day, _selectedTime!.hour, _selectedTime!.minute);
       
-      // EDGE CASE: Eğer saat bugünün geçmiş bir saatiyse, tarihi yarına at (Time Travel engellemesi)
+      // Eğer sadece saat seçili ve saat geçmişse tarihi otomatik yarına at
       if (calculated.isBefore(now)) {
         calculated = calculated.add(const Duration(days: 1));
       }
       finalScheduledAt = calculated;
     }
 
-    // Yeni Modelimizi oluşturuyoruz
+
     final newReminder = ReminderModel(
-      id: '', // Firestore oluştururken kendi ID verecek, biz boş geçiyoruz
-      userId: '', // Servis katmanında otomatik eklenecek
+      id: '', 
+      userId: '', 
       title: title,
       description: _descController.text.trim(),
       hasDate: _hasDate,
@@ -100,10 +113,21 @@ class _AddReminderScreenState extends State<AddReminderScreen> {
       createdAt: DateTime.now(),
     );
 
-    // Veritabanına gönder ve ekranı kapat
-    await _firestoreService.addReminder(newReminder);
-    if (mounted) {
-      Navigator.pop(context);
+    // Try-Catch
+    try {
+      await _firestoreService.addReminder(newReminder);
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Hatırlatıcı başarıyla eklendi!"), backgroundColor: Colors.green),
+        );
+        Navigator.pop(context); // Ekranı kapatıp ana ekrana dön
+      }
+    } catch (e) {
+      // Eğer Firebase'den veya internetten kaynaklı bir sorun olursa kullanıcıya göster
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Kayıt başarısız oldu: $e"), backgroundColor: Colors.red),
+      );
     }
   }
 
