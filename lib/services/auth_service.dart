@@ -40,4 +40,14 @@ class AuthService {
   Future<void> cikisYap() async {
     await _auth.signOut();
   }
+
+  // ŞİFRE SIFIRLAMA MAİLİ GÖNDERME
+  Future<void> sifreSifirlamaMailiGonder(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      // Hata fırlatarak arayüzde yakalanmasını sağlıyoruz
+      throw Exception("Mail gönderilemedi. E-posta adresinizi kontrol edin.");
+    }
+  }
 }
