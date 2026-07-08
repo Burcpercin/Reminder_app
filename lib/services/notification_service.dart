@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -54,13 +56,32 @@ class NotificationService {
       title: baslik,
       body: icerik,
       scheduledDate: tz.TZDateTime.from(zaman, tz.local),
-      notificationDetails: const NotificationDetails(
+      notificationDetails: NotificationDetails(
         android: AndroidNotificationDetails(
           'hatirlatici_kanali', 
           'Hatırlatıcılar',
           channelDescription: 'Planlanmış hatırlatıcı bildirimleri',
           importance: Importance.max,
           priority: Priority.high,
+          
+          // Tema Rengi (İkon ve butonlar bu renk olur)
+          color: const Color(0xFF4D319C),
+          
+          // Telefonun LED ışığı (Destekleyen cihazlarda mor yanıp söner)
+          enableLights: true,
+          ledColor: const Color(0xFF4D319C),
+          ledOnMs: 1000,
+          ledOffMs: 500,
+
+          // Uzun metinler için Genişletilmiş Görünüm
+          styleInformation: BigTextStyleInformation(
+            icerik, // Genişletildiğinde görünecek tam metin
+            contentTitle: baslik, // Genişletildiğinde görünecek başlık
+            summaryText: 'Planlı Görev', // Bildirimin sağ üstünde duran küçük özet metni
+          ),
+          
+          // Bildirim geldiğinde ekran kapalıysa uyandırır (Destekleyen cihazlarda)
+          visibility: NotificationVisibility.public,
         ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
