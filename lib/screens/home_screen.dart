@@ -6,6 +6,7 @@ import '../services/firestore_service.dart';
 import '../models/reminder_model.dart';
 import 'login_screen.dart';
 import 'add_reminder_screen.dart';
+import 'edit_reminder_screen.dart';
 import '../services/notification_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -107,64 +108,61 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: const EdgeInsets.only(bottom: 16.0),
                     // Kaydırarak silme widget
                     child: Dismissible(
-                      key: Key(reminder.id), // Her karta özel benzersiz anahtar
-                      direction: DismissDirection.endToStart, // Sadece sağdan sola kaydırma
+                      key: Key(reminder.id),
+                      // Her iki yöne kaydırmaya izin veriyoruz
+                      direction: DismissDirection.horizontal, 
+                      
+                      // 1. YÖN: Soldan Sağa Kaydırma (Düzenle Arka Planı)
                       background: Container(
-                        alignment: Alignment.centerRight,
-                        padding: const EdgeInsets.only(right: 20),
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Icon(Icons.delete_sweep, color: Colors.white, size: 36),
+                        color: Colors.blue,
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: const Icon(Icons.edit, color: Colors.white),
                       ),
-                      // Kesinleştirme modalı
+                      
+                      // 2. YÖN: Sağdan Sola Kaydırma (Silme Arka Planı)
+                      secondaryBackground: Container(
+                        color: Colors.redAccent,
+                        alignment: Alignment.centerRight,
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: const Icon(Icons.delete, color: Colors.white),
+                      ),
+                      
+                      // KAYDIRMA İŞLEMİNİ YAKALAMA VE YÖNLENDİRME
                       confirmDismiss: (direction) async {
-                        return await showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              backgroundColor: const Color(0xFF243B55), // Temaya uygun koyu arka plan
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                              title: const Row(
-                                children: [
-                                  Icon(Icons.warning_amber_rounded, color: Colors.redAccent),
-                                  SizedBox(width: 8),
-                                  Text("Silmek Üzeresin", style: TextStyle(color: Colors.white)),
-                                ],
-                              ),
-                              content: const Text("Bu hatırlatıcıyı kalıcı olarak silmek istediğine emin misin?", style: TextStyle(color: Colors.white70)),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.of(context).pop(false), // İptal seçeneği
-                                  child: const Text("İptal", style: TextStyle(color: Colors.grey)),
-                                ),
-                                ElevatedButton(
-                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-                                  onPressed: () => Navigator.of(context).pop(true), // Onay seçeneği
-                                  child: const Text("Evet, Sil", style: TextStyle(color: Colors.white)),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        if (direction == DismissDirection.startToEnd) {
+                          // Soldan sağa kaydırıldı: Düzenleme ekranını aç
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditReminderScreen(reminder: reminder),
+                            ),
+                          );
+                          // Öğenin listeden silinmemesi (yerine geri sekmesi) için false döndürüyoruz
+                          return false; 
+                          
+                        } else if (direction == DismissDirection.endToStart) {
+                          // Sağdan sola kaydırıldı: Silme işlemi onayı
+                          return true; // true döndürerek öğenin ekrandan kaybolmasına izin veriyoruz
+                        }
+                        return false;
                       },
                       
-                      // ONAY VERİLDİKTEN SONRA TETİKLENEN İŞLEM
+                      // SİLİNME İŞLEMİ TAMAMLANDIĞINDA TETİKLENEN KISIM
                       onDismissed: (direction) {
-                        // 1. Veritabanından sil
-                        _firestoreService.deleteReminder(reminder.id);
-                        
-                        // 2. YENİ: Telefonda kurulan alarmı iptal et
-                        NotificationService().bildirimIptalEt(reminder.id.hashCode);
-                        
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Hatırlatıcı başarıyla silindi."),
-                            backgroundColor: Color.fromARGB(255, 89, 57, 148),
-                            duration: Duration(seconds: 2),
-                          ),
-                        );
+                        // Sadece sağdan sola kaydırılıp true döndüğünde burası çalışır
+                        if (direction == DismissDirection.endToStart) {
+                          _firestoreService.deleteReminder(reminder.id);
+                          NotificationService().bildirimIptalEt(reminder.id.hashCode);
+                          
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Hatırlatıcı başarıyla silindi."),
+                              backgroundColor: Colors.redAccent,
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        }
                       },
                       // KARTIN KENDİSİ
                       child: _buildGlassCard(reminder, priorityColor),
