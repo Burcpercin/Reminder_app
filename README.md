@@ -1,23 +1,22 @@
-```markdown
 <div align="center">
-  <a href="#english">En English</a> &nbsp;|&nbsp; <a href="#türkçe">Tr Türkçe</a>
+  <a href="#english">En English</a> | <a href="#turkish">Tr Türkçe</a>
 </div>
 
----
-
 <span id="english"></span>
+
+## English
+
 # Reminder and Task Management Application
 
 This project constitutes a Flutter-based mobile application designed to facilitate the organization of daily tasks, assignment of priority levels, and delivery of scheduled local notifications. The development process strictly adheres to a service-oriented architecture and modular design principles.
 
 ## Screenshots
 <p align="center">
-  <img src="screenshots/login.png" width="22%" alt="Login Page" />
-  <img src="screenshots/home.png" width="22%" alt="Home Page" />
-  <img src="screenshots/reminder_settings.png" width="22%" alt="Reminder Settings" />
-  <img src="screenshots/notification.png" width="22%" alt="Notification Screen" />
+  <img src="screenshots/login.png" width="30%" alt="Login Page" />
+  <img src="screenshots/reminder_settings.png" width="30%" alt="Reminder Settings" />
+  <img src="screenshots/home.png" width="30%" alt="Home Page" />
+  <img src="screenshots/notification.png" width="30%" alt="Notification Screen" />
 </p>
-
 
 ## Core Features
 * **User Management (Firebase Auth):** Secure registration and authentication mechanisms utilizing email and password credentials, mandatory email verification protocols, and password recovery infrastructure.
@@ -52,7 +51,6 @@ lib/
     ├── auth_service.dart          # Firebase Authentication operations
     ├── firestore_service.dart     # Cloud Firestore CRUD operations
     └── notification_service.dart  # Timezone configuration and local notification scheduling
-
 ```
 
 ## Installation and Setup
@@ -71,7 +69,6 @@ Execute the following commands in your terminal to clone the repository to your 
 git clone <repository-url>
 cd <project-folder>
 flutter pub get
-
 ```
 
 ### 3. Firebase Integration
@@ -98,7 +95,6 @@ service cloud.firestore {
     }
   }
 }
-
 ```
 
 ### 5. Execution
@@ -107,7 +103,6 @@ Following the configuration, connect an emulator or a physical device and compil
 
 ```bash
 flutter run
-
 ```
 
 ## Developer
@@ -116,16 +111,23 @@ Burcpercin
 
 ---
 
----
+<span id="turkish"></span>
+
+## Türkçe
 
 # Hatırlatıcı ve Görev Yönetimi (Reminder App)
 
 Bu proje, kullanıcıların günlük işlerini organize etmelerini, görevlerine öncelik atamalarını ve zamanı geldiğinde yerel bildirimler ile haberdar olmalarını sağlayan Flutter tabanlı bir mobil uygulamadır. Geliştirme sürecinde servis tabanlı mimariye ve modüler yapıya sadık kalınmıştır.
 
 ## Ekran Görüntüleri
+<p align="center">
+  <img src="screenshots/login.png" width="30%" alt="Giriş Sayfası" />
+  <img src="screenshots/reminder_settings.png" width="30%" alt="Hatırlatıcı Ayarları" />
+  <img src="screenshots/home.png" width="30%" alt="Ana Sayfa" />
+  <img src="screenshots/notification.png" width="30%" alt="Bildirim" />
+</p>
 
 ## Temel Özellikler
-
 * **Kullanıcı Yönetimi (Firebase Auth):** E-posta ve şifre ile güvenli kayıt/giriş, zorunlu e-posta doğrulama mekanizması ve şifre sıfırlama (şifremi unuttum) altyapısı.
 * **Gerçek Zamanlı Veritabanı (Cloud Firestore):** Görevlerin kullanıcı kimliğine (UID) göre izole bir şekilde saklanması, anlık olarak listelenmesi, güncellenmesi ve silinmesi (CRUD).
 * **Zamanlanmış Yerel Bildirimler:** Uygulama tamamen kapalı veya arka planda olsa dahi `flutter_local_notifications` ve Android AlarmManager kullanılarak cihaz saatine göre çalışan kesin (exact) bildirimler.
@@ -133,14 +135,12 @@ Bu proje, kullanıcıların günlük işlerini organize etmelerini, görevlerine
 * **Kullanıcı Deneyimi (UX):** Ana ekranda kaydırma (swipe) jestleri ile hızlı silme ve düzenleme sayfasına geçiş özellikleri. Dinamik tarih ve saat seçiciler.
 
 ## Kullanılan Teknolojiler ve Paketler
-
 * **SDK:** Flutter & Dart
 * **Backend:** Firebase (Authentication, Cloud Firestore)
 * **Tarih & Saat İşlemleri:** `intl`, `timezone`, `flutter_timezone`
 * **Bildirim Motoru:** `flutter_local_notifications`
 
 ## Proje Mimarisi ve Klasör Yapısı
-
 Proje, kodun okunabilirliğini ve bakımını kolaylaştırmak için aşağıdaki dizin yapısına göre tasarlanmıştır:
 
 ```text
@@ -160,7 +160,6 @@ lib/
     ├── auth_service.dart          # Firebase Auth işlemleri (Giriş, çıkış, kayıt, mail gönderme)
     ├── firestore_service.dart     # Firestore CRUD (okuma/yazma/silme/güncelleme) işlemleri
     └── notification_service.dart  # Zaman dilimi ayarları ve yerel bildirim kurulumları
-
 ```
 
 ## Kurulum Adımları
@@ -179,7 +178,6 @@ Terminalinizi açın ve projeyi yerel bilgisayarınıza klonlayın:
 git clone <repository-url>
 cd <project-folder>
 flutter pub get
-
 ```
 
 ### 3. Firebase Entegrasyonu
@@ -199,12 +197,13 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /reminders/{document=**} {
+      // Sadece giriş yapmış ve belgenin sahibi olan kullanıcılar okuyup yazabilir
       allow read, update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+      // Yeni kayıt oluşturmak için giriş yapmış olmak yeterlidir
       allow create: if request.auth != null;
     }
   }
 }
-
 ```
 
 ### 5. Çalıştırma
@@ -213,17 +212,8 @@ Tüm yapılandırmaları tamamladıktan sonra bir emülatör veya fiziksel cihaz
 
 ```bash
 flutter run
-
 ```
 
 ## Geliştirici
 
 Burcpercin
-
-```
-```bash
-git add README.md
-git commit -m "fix(docs): resolve markdown rendering issues and restore image visibility"
-git push
-
-```
