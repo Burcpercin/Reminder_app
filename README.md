@@ -11,11 +11,13 @@
 This project constitutes a Flutter-based mobile application designed to facilitate the organization of daily tasks, assignment of priority levels, and delivery of scheduled local notifications. The development process strictly adheres to a service-oriented architecture and modular design principles.
 
 ## Screenshots
+## Screenshots
 <p align="center">
-  <img src="screenshots/login.png" width="30%" alt="Login Page" />
-  <img src="screenshots/reminder_settings.png" width="30%" alt="Reminder Settings" />
-  <img src="screenshots/home.png" width="30%" alt="Home Page" />
-  <img src="screenshots/notification.png" width="30%" alt="Notification Screen" />
+  <img src="screenshots/login.png" width="45%" alt="Login Page" />
+  <img src="screenshots/reminder_settings.png" width="45%" alt="Reminder Settings" />
+  <br>
+  <img src="screenshots/home.png" width="45%" alt="Home Page" />
+  <img src="screenshots/notification.png" width="45%" alt="Notification Screen" />
 </p>
 
 ## Core Features
@@ -121,10 +123,11 @@ Bu proje, kullanıcıların günlük işlerini organize etmelerini, görevlerine
 
 ## Ekran Görüntüleri
 <p align="center">
-  <img src="screenshots/login.png" width="30%" alt="Giriş Sayfası" />
-  <img src="screenshots/reminder_settings.png" width="30%" alt="Hatırlatıcı Ayarları" />
-  <img src="screenshots/home.png" width="30%" alt="Ana Sayfa" />
-  <img src="screenshots/notification.png" width="30%" alt="Bildirim" />
+  <img src="screenshots/login.png" width="45%" alt="Giriş Sayfası" />
+  <img src="screenshots/reminder_settings.png" width="45%" alt="Hatırlatıcı Ayarları" />
+  <br>
+  <img src="screenshots/home.png" width="45%" alt="Ana Sayfa" />
+  <img src="screenshots/notification.png" width="45%" alt="Bildirim" />
 </p>
 
 ## Temel Özellikler
