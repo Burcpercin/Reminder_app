@@ -1,8 +1,10 @@
-<div align="right">
+<div align="center">
   <a href="#turkish">Tr Türkçe</a> | <a href="#english">En English</a>
 </div>
 
 <span id="english"></span>
+
+## English
 
 ```markdown
 # Reminder and Task Management Application
@@ -10,10 +12,12 @@
 This project constitutes a Flutter-based mobile application designed to facilitate the organization of daily tasks, assignment of priority levels, and delivery of scheduled local notifications. The development process strictly adheres to a service-oriented architecture and modular design principles.
 
 ## Screenshots
-![Login Page](screenshots/login.png)
-![Reminder Settings](screenshots/reminder_settings.png)
-![Home Page](screenshots/home.png)
-![Notification](screenshots/notification.png)
+<p align="center">
+  <img src="screenshots/login.png" width="30%" alt="Login Page" />
+  <img src="screenshots/reminder_settings.png" width="30%" alt="Reminder Settings" />
+  <img src="screenshots/home.png" width="30%" alt="Home Page" />
+  <img src="screenshots/notification.png" width="30%" alt="Notification Screen" />
+</p>
 
 
 ## Core Features
@@ -115,16 +119,20 @@ Burcpercin
 
 <span id="turkish"></span>
 
+## Türkçe
+
 ```markdown
 # Hatırlatıcı ve Görev Yönetimi (Reminder App)
 
 Bu proje, kullanıcıların günlük işlerini organize etmelerini, görevlerine öncelik atamalarını ve zamanı geldiğinde yerel bildirimler ile haberdar olmalarını sağlayan Flutter tabanlı bir mobil uygulamadır. Geliştirme sürecinde servis tabanlı mimariye ve modüler yapıya sadık kalınmıştır.
 
 ## Ekran Görüntüleri
-![Giriş Ekranı](screenshots/login.png)
-![Hatırlatıcı Ayarları](screenshots/reminder_settings.png)
-![Ana Ekran](screenshots/home.png)
-![Bildirim](screenshots/notification.png)
+<p align="center">
+  <img src="screenshots/login.png" width="30%" alt="Giriş Sayfası" />
+  <img src="screenshots/reminder_settings.png" width="30%" alt="Hatırlatıcı Ayarları" />
+  <img src="screenshots/home.png" width="30%" alt="Ana Sayfa" />
+  <img src="screenshots/notification.png" width="30%" alt="Bildirim" />
+</p>
 
 
 ## Temel Özellikler
@@ -222,6 +230,4 @@ flutter run
 
 Burcpercin
 
-```
-
-```
+---
