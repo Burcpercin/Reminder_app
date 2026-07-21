@@ -11,7 +11,6 @@
 This project constitutes a Flutter-based mobile application designed to facilitate the organization of daily tasks, assignment of priority levels, and delivery of scheduled local notifications. The development process strictly adheres to a service-oriented architecture and modular design principles.
 
 ## Screenshots
-## Screenshots
 <p align="center">
   <img src="screenshots/login.png" width="45%" alt="Login Page" />
   <img src="screenshots/reminder_settings.png" width="45%" alt="Reminder Settings" />
